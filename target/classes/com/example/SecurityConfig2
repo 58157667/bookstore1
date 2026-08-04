@@ -1,0 +1,84 @@
+package com.example.demo;
+//package com.book.sync.config;
+
+import javax.annotation.Resource;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig2 {
+
+    @Resource
+    private UserDao userDao;
+
+    // 密码加密器
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    // 自定义从数据库查询用户
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> {
+            SysUser user = userDao.findByUsername(username);
+            if (user == null) {
+                throw new UsernameNotFoundException("用户名不存在");
+            }
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(user.getUsername())
+                    .password(user.getPassword())
+                    .roles("USER")
+                    .build();
+        };
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    // 权限拦截规则
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                // 放行注册页面、注册提交接口
+                .antMatchers("/register", "/doRegister").permitAll()
+                // 其余所有接口需要登录
+                .anyRequest().authenticated()
+                .and()
+                // 自定义登录页面
+                .formLogin()
+                .loginPage("/login") // 访问登录页地址
+                .loginProcessingUrl("/doLogin") // Security自动处理登录提交，不用自己写接口
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/book/list", true) // 登录成功跳图书列表
+                .permitAll()
+                .and()
+                // 退出登录
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+                .and()
+                // 关闭csrf（thymeleaf页面可关闭方便测试）
+                .csrf().disable();
+
+        return http.build();
+    }
+}

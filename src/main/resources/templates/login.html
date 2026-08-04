@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <style>
+        body { width: 350px; margin: 80px auto; font-family: "微软雅黑"; }
+        .box { border: 1px solid #ddd; padding: 30px; border-radius: 8px; }
+        h2 { text-align: center; margin-bottom: 25px; }
+        .item { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 9px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .tip { color: red; text-align: center; margin:10px 0; }
+        .reg-link { text-align: center; margin-top:15px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>图书系统登录</h2>
+
+        <!-- 注册成功提示 -->
+        <div class="tip" th:if="${param.reg}">注册成功，请登录</div>
+        <!-- 登录失败提示 -->
+        <div class="tip" th:if="${param.error}">用户名或密码错误</div>
+        <!-- 退出登录提示 -->
+        <div class="tip" th:if="${param.logout}">已安全退出</div>
+
+        <!-- 登录表单，action固定为 /doLogin -->
+        <form th:action="@{/doLogin}" method="post">
+            <div class="item">
+                <label>用户名</label>
+                <input type="text" name="username" required placeholder="请输入用户名">
+            </div>
+            <div class="item">
+                <label>密码</label>
+                <input type="password" name="password" required placeholder="请输入密码">
+            </div>
+            <button type="submit">登录</button>
+        </form>
+
+        <div class="reg-link">
+            没有账号？<a th:href="@{/register}">立即注册</a>
+        </div>
+    </div>
+</body>
+</html>

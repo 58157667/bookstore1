@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>图书管理列表</title>
+    <style>
+        * {margin: 0;padding: 0;box-sizing: border-box;}
+        body {padding: 30px;font-family: Microsoft Yahei;}
+        .search-box {margin-bottom: 20px;display:flex;gap:10px;align-items:center;}
+        input[type="text"],select {padding: 8px 12px;width: 300px;font-size: 14px;}
+        select{width:180px;}
+        button {padding: 8px 16px;background: #007bff;color: white;border: none;cursor: pointer;border-radius: 4px;}
+        table {width: 100%;border-collapse: collapse;border:1px solid #ccc;}
+        th,td {border:1px solid #ccc;padding:10px;text-align: left;}
+        th {background: #f5f5f5;}
+        .page-box {margin-top:20px;}
+        .page-box a {display: inline-block;padding:6px 12px;border:1px solid #ccc;text-decoration: none;margin:0 3px;color:#333;}
+        .page-box a.active {background:#007bff;color:white;border-color:#007bff;}
+        .cover-img {height:60px;}
+        .sync-btn{background:#28a745;margin-left:10px;}
+    </style>
+</head>
+<body>
+    <h2>图书列表（分类+书名双筛选）</h2>
+<div style="text-align:right;padding:10px 0;border-bottom:1px solid #eee;margin-bottom:20px;"
+     xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <span sec:authentication="principal.username">欢迎用户</span>
+    <a th:href="@{/logout}" style="margin-left:20px;color:red;">退出登录</a>
+<!--    <a th:href="@{/book/sync}"><button class="sync-btn">同步七牛图书</button></a>-->
+</div>
+
+<!--<div style="text-align:right;padding:10px 0;border-bottom:1px solid #eee;margin-bottom:20px;"-->
+<!--     xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">-->
+<!--    <span sec:authorize="isAuthenticated()" sec:authentication="principal.username">欢迎</span>-->
+<!--    <span sec:authorize="!isAuthenticated()">请先登录</span>-->
+<!--    <a th:href="@{/logout}" sec:authorize="isAuthenticated()" style="margin-left:20px;color:red;">退出登录</a>-->
+<!--    <a th:href="@{/book/sync}"><button class="sync-btn">同步七牛图书</button></a>-->
+<!--</div>-->
+
+
+<!-- 搜索+分类下拉表单 -->
+<div class="search-box">
+    <form th:action="@{/book/list}" method="get" style="display:flex;gap:10px;align-items:center;">
+        <!-- 分类下拉 -->
+        
+        <select name="categoryId">
+            <option value="">全部分类</option>
+            <th:each="cat : ${categoryList}">
+                <option th:each="cat : ${categoryList}"
+        th:value="${cat.id}"
+        th:selected="${cat != null and selectCategoryId == cat.id}"
+        th:text="${cat.name}">
+</option>
+            </th:each>
+        </select>
+        <!-- 书名搜索 -->
+        <input type="text" name="keyword" placeholder="输入书名模糊查询" th:value="${keyword}">
+        <button type="submit">搜索</button>
+        <button type="button" onclick="location.href='/book/list'">重置</button>
+    </form>
+</div>
+
+<!-- 图书表格（新增分类列） -->
+<table>
+    <tr>
+        <th>ID</th>
+        <th>分类</th>
+        <th>书名(title)</th>
+        <th>PDF文件链接</th>
+        <th>封面图片</th>
+        <th>封面链接</th>
+    </tr>
+    <tr th:each="item : ${list}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.categoryName != null ? item.categoryName : '未分类'}"></td>
+        <td th:text="${item.title}"></td>
+        <td>
+            <a th:href="${item.bookFileUrl}" target="_blank">打开PDF</a>
+        </td>
+        <td>
+            <img th:if="${item.coverImageUrl}" th:src="${item.coverImageUrl}" class="cover-img">
+            <span th:unless="${item.coverImageUrl}">无封面</span>
+        </td>
+        <td>
+            <a th:href="${item.coverImageUrl}" target="_blank">查看图片</a>
+        </td>
+    </tr>
+</table>
+
+<!-- 分页（携带分类、搜索参数） -->
+<div class="page-box" th:if="${totalPage > 1}">
+    <span>第<span th:text="${current}"></span>页 / 共<span th:text="${totalPage}"></span>页</span>
+    <a th:href="@{/book/list(page=1,keyword=${keyword},categoryId=${selectCategoryId})}"
+       th:class="${current==1}?'active':''">首页</a>
+    <a th:if="${current > 1}"
+       th:href="@{/book/list(page=${current}-1,keyword=${keyword},categoryId=${selectCategoryId})}">上一页</a>
+    <a th:if="${current < totalPage}"
+       th:href="@{/book/list(page=${current}+1,keyword=${keyword},categoryId=${selectCategoryId})}">下一页</a>
+    <a th:href="@{/book/list(page=${totalPage},keyword=${keyword},categoryId=${selectCategoryId})}"
+       th:class="${current==totalPage}?'active':''">尾页</a>
+</div>
+</body>
+</html>
