@@ -28,6 +28,8 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<!-- 统一lombok版本，JDK17兼容 -->
+		<lombok.version>1.18.30</lombok.version>
 	</properties>
 
     <dependencies>
@@ -42,7 +44,12 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-security</artifactId>
 </dependency>
-
+<!-- SpringBoot 测试依赖 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
 <!-- thymeleaf security标签（页面判断登录状态） -->
 <dependency>
     <groupId>org.thymeleaf.extras</groupId>
@@ -65,14 +72,14 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.5.5</version>
         </dependency>
-        <!-- Lombok -->
-       <dependency>
-    <groupId>org.projectlombok</groupId>
-    <artifactId>lombok</artifactId>
-    <scope>provided</scope>
-</dependency>
-
-
+        <!-- Lombok 补上version -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
         <!-- 七牛云SDK -->
         <dependency>
             <groupId>com.qiniu</groupId>
@@ -85,9 +92,6 @@
             <artifactId>pdfbox</artifactId>
             <version>2.0.32</version>
         </dependency>
-        <!-- 图片处理依赖（字体渲染） -->
-   
-        
         <!-- 文件IO工具 -->
         <dependency>
             <groupId>commons-io</groupId>
@@ -114,6 +118,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+                <!-- 指定插件版本和JDK版本 -->
+                <version>3.10.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
 				<executions>
 					<execution>
 						<id>default-compile</id>
@@ -126,6 +137,8 @@
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
+									<!-- 关键：补上版本 -->
+									<version>${lombok.version}</version>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
@@ -137,16 +150,12 @@
 							<goal>testCompile</goal>
 						</goals>
 						<configuration>
-							<!-- 关键：注解处理器必须指定version -->
-<annotationProcessor>
-    <groupId>org.projectlombok</groupId>
-    <artifactId>lombok</artifactId>
-    <version>1.18.30</version>
-</annotationProcessor>
 							<annotationProcessorPaths>
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
+									<!-- 关键：补上版本 -->
+									<version>${lombok.version}</version>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
