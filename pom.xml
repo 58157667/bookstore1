@@ -66,11 +66,18 @@
             <version>3.5.5</version>
         </dependency>
         <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
+       <dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <scope>provided</scope>
+</dependency>
+
+<!-- 关键：注解处理器必须指定version -->
+<annotationProcessor>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.30</version>
+</annotationProcessor>
         <!-- 七牛云SDK -->
         <dependency>
             <groupId>com.qiniu</groupId>
