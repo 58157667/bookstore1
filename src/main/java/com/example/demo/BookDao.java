@@ -1,7 +1,6 @@
 package com.example.demo;
 import java.util.List;
 
-//package com.example.demo;
 import javax.annotation.Resource;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -78,7 +77,7 @@ public class BookDao {
         }
         return jdbcTemplate.queryForObject(sql, Integer.class, param);
     }
-    // 搜索总条数
+    // 搜索总条数【修复：sql.toString()】
     public int countSearch(String keyword, Long categoryId) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(1) FROM book WHERE title ILIKE ? ");
         Object[] params;
@@ -88,6 +87,7 @@ public class BookDao {
         }else{
             params = new Object[]{"%"+keyword+"%"};
         }
-        return jdbcTemplate.queryForObject(sql, Integer.class, params);
+        // 关键修复：调用toString()转为字符串
+        return jdbcTemplate.queryForObject(sql.toString(), Integer.class, params);
     }
 }
