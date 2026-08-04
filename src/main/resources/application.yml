@@ -1,6 +1,9 @@
 server:
-  port: 8082
-
+　port: 8082
+  tomcat:
+    uri-encoding: UTF-8
+    relaxed-path-chars: '%'
+    relaxed-query-chars: '%'
 spring:
  datasource:
     url: jdbc:postgresql://ep-summer-rice-aot33kkd.c-2.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require
