@@ -74,9 +74,13 @@
         <td th:text="${item.id}"></td>
         <td th:text="${item.categoryName != null ? item.categoryName : '未分类'}"></td>
         <td th:text="${item.title}"></td>
-        <td>
-            <a th:href="${item.bookFileUrl}" target="_blank">打开PDF</a>
-        </td>
+      <td>
+    <a th:href="${item.bookFileUrl}" target="_blank">打开PDF</a>
+    <br>
+    <span style="color:red;font-size:22px;font-weight:bold;">
+        ★ 请右键 → 链接另存为 下载PDF ★
+    </span>
+</td>
         <td>
             <img th:if="${item.coverImageUrl}" th:src="${item.coverImageUrl}" class="cover-img">
             <span th:unless="${item.coverImageUrl}">无封面</span>
