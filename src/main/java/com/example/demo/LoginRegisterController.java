@@ -21,9 +21,9 @@ public class LoginRegisterController {
     }
 
     // 注册页
-    @GetMapping("/register")
+    @GetMapping("/registerwws")
     public String registerPage() {
-        return "register";
+        return "registerwws";
     }
 
     // 【修改】接收手机号、邮箱、备注
@@ -46,6 +46,6 @@ public class LoginRegisterController {
         model.addAttribute("phone", phone);
         model.addAttribute("email", email);
         model.addAttribute("remark", remark);
-        return "register";
+        return "registerwws";
     }
 }
