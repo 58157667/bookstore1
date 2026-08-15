@@ -55,7 +55,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 // 仅放行 登录页、注册相关，删掉了 /** 全部放行
-                .antMatchers("/login", "/register", "/doRegister").permitAll()
+                .antMatchers("/login", "/register", "/doRegister", "/wx/**").permitAll()
                 // 所有book接口必须登录：/book/list /book/sync 都受保护
                 .antMatchers("/book/**").authenticated()
                 // 其余所有请求都需要认证
